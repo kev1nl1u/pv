@@ -3,6 +3,12 @@
 * {
 	font-family: 'Montserrat', sans-serif;
 }
+
+html{
+	background-color: var(--surface);
+	/* random space at the end of the page idfk */
+}
+
 body {
 	margin: 0;
 	padding: 0;
@@ -31,7 +37,7 @@ a:hover {
 
 /* list */
 #list{
-	margin: 25px 0;
+	margin: 15px 0;
 	width: 100%;
 }
 .list-elem{
@@ -1144,3 +1150,35 @@ a.btn.circle{
   svg {
 	display: none;
   }
+
+
+
+
+
+  /* filtri */
+.filter-container{
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	gap: 50px;
+}
+.filters{
+	display: flex;
+	gap: 15px;
+}
+.filters .btn{
+	width: fit-content;
+}
+@media screen and (max-width: 600px) {
+	.filter-container{
+		overflow-x: scroll;
+		padding: 10px 0;
+		border-radius: 25px;
+	}
+	.filter-container::-webkit-scrollbar {
+		display: none;
+	}
+	.filters{
+		gap: 5px;
+	}
+}

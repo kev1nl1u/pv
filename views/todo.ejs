@@ -87,34 +87,51 @@
 
 
 	<div class="main-container">
-        <div class="main">
+        <div class="main" style="margin-top: 15px">
+
+			<div class="filter-container">
+				<div class="filters filter-done">
+					<a class="btn outlined" onclick="filter(this)">todo</a>
+					<a class="btn outlined" onclick="filter(this)">fatto</a>
+				</div>
+				<div class="filters filter-type">
+					<a class="btn outlined" onclick="filter(this)">spesa</a>
+					<a class="btn outlined" onclick="filter(this)">task</a>
+					<a class="btn outlined" onclick="filter(this)">altro</a>
+				</div>
+			</div>
+
 			<div class="flex-center-y" id="list">
 			</div>
 		</div>
 	</div>
 
 	<script>
-		var lista = <%- JSON.stringify(lista) %>;
+		const lista = <%- JSON.stringify(lista) %>;
 		console.log(lista);
 		// print in #list
 		// on dom load
 		$(document).ready(() => {
 			lista.forEach((item) => {
-				var type_icon = '';
+				$('#list').append(generateItemHTML(item));
+			});
+		});
+
+		function generateItemHTML(item){
+			var type_icon = '';
 				switch(item.type){
 					case 'spesa':
 						type_icon = 'shopping-cart';
 						break;
-					case 'todo':
-						type_icon = 'list';
+					case 'task':
+						type_icon = 'list-check';
 						break;
 					case 'altro':
 					default:
 						type_icon = 'ellipsis-h';
 						break;
-				} 
-				$('#list').append(`
-					<div class="list-elem" id="${item.id}">
+			}
+			return `<div class="list-elem" id="${item.id}" data-done="${item.doneby ? "1" : "0"}" data-type="${item.type}">
 						<div class="user"><i class="fa-solid fa-user"></i> ${item.foruser}</div>
 						<div class="title"><i class="fas fa-${type_icon}"></i> ${item.title}</div>
 						<div class="desc">${item.description}</div>
@@ -144,9 +161,50 @@
 										</svg>
 						</div>
 					</div>
-				`);
+				`;
+		}
+
+		function filter(e){
+			var elems = [];
+			lista.forEach((item) => {
+				// get elems from generateItemHTML converted to jQuery object
+				elems.push($(generateItemHTML(item)));	
 			});
-		});
+			// set active class
+			$(e).siblings().removeClass('filled').addClass('outlined');
+			$(e).toggleClass('outlined').toggleClass('filled');
+			var done = $('.filter-done .filled').html();
+			var type = $('.filter-type .filled').html();
+			console.log(done, type);
+			// filter
+			// remove elements from elems that don't match the filter
+			elems = elems.filter(elem => {
+				if (done) {
+					if (done === 'todo') {
+						// Keep the element if it's not marked as done
+						return elem.data('done') !== 1;
+					} else if (done === 'fatto') {
+						// Keep the element if it's marked as done
+						return elem.data('done') !== 0;
+					}
+				}
+				return true; // If `done` is not specified, keep all elements
+			});
+			elems = elems.filter(elem => {
+				if (type) {
+					// Keep the element if it matches the type
+					return elem.data('type') === type;
+				}
+				return true; // If `type` is not specified, keep all elements
+			});
+			// empty #list
+			$('#list').empty();
+			// append elems to #list
+			elems.forEach((elem) => {
+				$('#list').append(elem);
+			});
+
+		}
 	</script>
 
 	<script>
@@ -252,7 +310,7 @@
 							<div class="select">
 								<select class="select-text" required name="type">
 									<option selected id="spesa" value="spesa">spesa</option>
-									<option id="todo" value="todo">da fare</option>
+									<option id="task" value="task">task</option>
 									<option id="altro" value="altro">altro</option>
 								</select>
 								<label class="select-label">tipo</label>
@@ -302,7 +360,7 @@
 								<select class="select-text" required name="type">
 									<option selected value="" style="display: none;" disabled></option>
 									<option id="spesa" value="spesa">spesa</option>
-									<option id="todo" value="todo">da fare</option>
+									<option id="task" value="task">todo</option>
 									<option id="altro" value="altro">altro</option>
 								</select>
 								<label class="select-label">tipo</label>
