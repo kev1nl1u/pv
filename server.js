@@ -9,7 +9,7 @@ CREATE TABLE todo (
 	type VARCHAR, -- spesa, ecc
 	title VARCHAR,
 	description VARCHAR,
-	user VARCHAR,
+	foruser VARCHAR,
 	doneby VARCHAR DEFAULT NULL
 );
 
@@ -54,7 +54,8 @@ app.get('/todo', async (req, res) => {
 app.post('/api/add', async (req, res) => {
 	try {
 		const { type, title, description, user} = req.body;
-		const newTodo = await pool.query("INSERT INTO todo (type, title, description, user) VALUES($1, $2, $3, $4) RETURNING *", [type, title, description, user]);
+		console.log(user);
+		const newTodo = await pool.query("INSERT INTO todo (type, title, description, foruser) VALUES($1, $2, $3, $4) RETURNING *", [type, title, description, user]);
 		res.redirect('/todo');
 	} catch (error) {
 		console.error(error.message);
@@ -75,7 +76,7 @@ app.post('/api/update/:id', async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { type, title, description, user } = req.body;
-		const updatedTodo = await pool.query("UPDATE todo SET type = $1, title = $2, description = $3, user = $4 WHERE id = $5", [type, title, description, user, id]);
+		const updatedTodo = await pool.query("UPDATE todo SET type = $1, title = $2, description = $3, foruser = $4 WHERE id = $5", [type, title, description, user, id]);
 		res.redirect('/todo');
 	} catch (error) {
 		console.error(error.message);

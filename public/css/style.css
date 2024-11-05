@@ -65,6 +65,9 @@ a:hover {
 .list-elem .type, .list-elem .done, .list-elem .settings{
 	place-self: center;
 }
+.list-elem .done{
+	display: flex; justify-content: center; align-items: center; gap: 5px
+}
 .list-elem .fa-times{
 	color: #af1d27;
 }
@@ -133,8 +136,7 @@ a:hover {
     box-sizing: border-box;
     position: relative;
     background: var(--surface);
-    width: 75%;
-    height: 85dvh;
+	padding: min(15%, 75px) min(15%, 150px);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -151,6 +153,18 @@ a:hover {
     right: 10px;
     cursor: pointer;
 }
+
+.modal-inner-spacing{
+	width: min(100%, 600px);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 20px;
+}
+.modal-inner-spacing h2{
+	margin: 0;
+}
+
 @media screen and (max-width: 600px) {
 	.modal-inner{
 		width: 85%;
@@ -1022,8 +1036,18 @@ code, .mono{
 
 
 
-
-
+a.btn.circle{
+	border-radius: 50%;
+	height: 40px; width: 40px;
+	display: grid;
+	place-items: center;
+}
+.list-elem:nth-child(odd) a.btn.circle{
+	background-color: var(--surface);
+}
+.list-elem:nth-child(even) a.btn.circle{
+	background-color: var(--surface-variant);
+}
 
 
 
@@ -1033,12 +1057,14 @@ code, .mono{
 
 .dropdown {
 	position: absolute;
+	height: 100%;
 	/*filter: url(#goo);*/
   }
   .dropdown__face, .dropdown__items{
-	padding: 10px;
-	border-radius: 25px;
+	padding: 10px; display: grid; place-items: center;
   }
+  .dropdown__face{ border-radius: 50%; height: 40px; width: 40px; }
+  .dropdown__items{ border-radius: 25px; }
   .list-elem:nth-child(odd) .dropdown__items, .list-elem:nth-child(odd) .dropdown__face{
 	background-color: var(--surface);
   }

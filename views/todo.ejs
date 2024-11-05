@@ -115,11 +115,11 @@
 				} 
 				$('#list').append(`
 					<div class="list-elem" id="${item.id}">
-						<div class="user"><i class="fa-solid fa-user"></i> ${item.user}</div>
+						<div class="user"><i class="fa-solid fa-user"></i> ${item.foruser}</div>
 						<div class="title"><i class="fas fa-${type_icon}"></i> ${item.title}</div>
 						<div class="desc">${item.description}</div>
 						<div class="done" id="done-${item.id}-container" onclick="done(${item.id})">
-							<i class="fas fa-${item.doneby ? 'check' : 'times'}"></i> ${item.doneby ? item.doneby : ''}
+							<a class="btn circle"><i class="fas fa-${item.doneby ? 'check' : 'times'}"></i></a> ${item.doneby ? item.doneby : ''}
 						</div>
 						<div class="settings-container">
 										<div class="dropdown">
@@ -175,7 +175,7 @@
 					$('#edit-todo select[name="type"]').val(data.type);
 					$('#edit-todo input[name="title"]').val(data.title);
 					$('#edit-todo input[name="description"]').val(data.description);
-					$('#edit-todo select[name="user"]').val(data.user);
+					$('#edit-todo select[name="user"]').val(data.foruser);
 					// open modal
 					openModal('edit-todo');
 				}
@@ -220,7 +220,7 @@
 					type: 'GET',
 					success: function(data) {
 						// remove check
-						$(`#${id} .done`).html(`<i class="fas fa-times"></i>`);
+						$(`#${id} .done`).html(`<a class="btn circle"><i class="fas fa-times"></i></a>`);
 						// set width and height back
 						btn.style.width = '';
 						btn.style.height = '';
@@ -244,7 +244,7 @@
 	<div id="add-todo" class="modal">
 		<div class="modal-inner">
 			<span class="btn text modal-close" onclick="closeModal('add-todo')">&times;</span>
-			<div style="margin: 50px 0; width: min(100%, 600px); height: 100%;">
+			<div class="modal-inner-spacing">
 				<h2>aggiungi</h2>
 				<form method="POST" action="/api/add" class="basic-form">
 					<div class="input-container">
@@ -293,7 +293,7 @@
 	<div id="edit-todo" class="modal">
 		<div class="modal-inner">
 			<span class="btn text modal-close" onclick="closeModal('edit-todo')">&times;</span>
-			<div style="margin: 50px 0; width: min(100%, 600px); height: 100%;">
+			<div class="modal-inner-spacing">
 				<h2>modifica</h2>
 				<form method="POST" action="/api/update/:id" class="basic-form">
 					<div class="input-container">
@@ -340,7 +340,7 @@
 	<div id="done-todo" class="modal">
 		<div class="modal-inner">
 			<span class="btn text modal-close" onclick="closeModal('done-todo')">&times;</span>
-			<div style="margin: 50px 0; width: min(100%, 600px);">
+			<div class="modal-inner-spacing">
 				<h2><span id="title"></span> completato da:</h2>
 				<form method="POST" action="/api/doneby/:id" class="basic-form">
 					<div class="select">
