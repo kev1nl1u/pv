@@ -39,27 +39,8 @@ a:hover {
 	display: grid;
 	grid-template-columns: 1fr 1fr 2fr 1fr 50px;
 	border-radius: 5px;
-}
-.list-elem .user,.list-elem .title,.list-elem .desc{
 	padding: 15px;
-}
-.list-elem .done,.list-elem .settings{
-	padding: max(15px, 0);
-}
-@media only screen and (max-width: 600px) {
-	.list-elem{
-		display: grid;
-		grid-template-areas: 
-			'user user user user settings settings'
-			'title title title title settings settings'
-			'desc desc desc desc done done';
-		gap: 10px;
-	}
-	.user{ grid-area: user; }
-	.title{ grid-area: title; }
-	.desc{ grid-area: desc; }
-	.done{ grid-area: done; }
-	.settings-container{ grid-area: settings; }
+	align-items: center;
 }
 .list-elem:nth-child(odd){
 	background-color: var(--surface-variant);
@@ -71,7 +52,7 @@ a:hover {
 	place-self: center;
 }
 .list-elem .done{
-	display: flex; justify-content: center; align-items: center; gap: 5px
+	display: flex; justify-content: center; align-items: center; gap: 5px; position: relative;
 }
 .list-elem .fa-times{
 	color: #af1d27;
@@ -79,17 +60,41 @@ a:hover {
 .list-elem .fa-check{
 	color: #8dc048;
 }
-
-.settings-container{
-	position: relative;
-	display: grid;
-	place-items: center;
+.list-elem .done span{
+	transform: rotate(-90deg);
+	position: absolute;
+	right: -25px;
+	color: var(--muted);
+}
+@media only screen and (max-width: 950px) {
+	.list-elem{
+		display: grid;
+		grid-template-areas: 
+			'user user user user settings settings'
+			'user user user user settings settings'
+			'title title title title settings settings'
+			'title title title title done done'
+			'desc desc desc desc done done'
+			'desc desc desc desc done done';
+		gap: 10px;
+	}
+	.user{ grid-area: user; }
+	.title{ grid-area: title; }
+	.desc{ grid-area: desc; }
+	.done{ grid-area: done; }
+	.settings-container{ grid-area: settings; }
+	.list-elem .user,.list-elem .title,.list-elem .desc, .list-elem .done,.list-elem .settings{
+		padding: 0;
+	}
+	.list-elem{
+		padding: 15px;
+	}
 }
 
 #home{
 	transform: rotate(-90deg); text-align: center;
 }
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 950px) {
 	#home{
 		transform: rotate(0deg);
 	}
@@ -170,7 +175,7 @@ a:hover {
 	margin: 0;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 950px) {
 	.modal-inner{
 		width: 85%;
 		height: fit-content;
@@ -460,7 +465,7 @@ p, h1{
     grid-template-columns: 1fr 1fr;
     place-items: center;
 }
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 950px) {
     .grid-center-2col {
         grid-template-columns: 1fr;
     }
@@ -526,7 +531,7 @@ code, .mono{
 	grid-template-rows: repeat(auto-fill, 1fr);
 	place-items: center;
 }
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 950px) {
 	.sidebar-inner{
 		width: 100%;
 	}
@@ -879,7 +884,7 @@ code, .mono{
 
 /**********/
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 950px) {
     .hamburger {
         display: flex;
         z-index: 10000;
@@ -1055,6 +1060,15 @@ a.btn.circle{
 }
 
 
+
+
+.settings-container{
+	width: 100%;
+	height: 100%;
+	position: relative;
+	display: grid;
+	place-items: center;
+}
 
 .dropdown *{
 	box-sizing: border-box;

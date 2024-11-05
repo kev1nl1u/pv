@@ -59,7 +59,7 @@
     <script>
         // on scroll down hide / up show sidebar-link-text on mobile
         function nav(){
-            if (window.innerWidth <= 600) {
+            if (window.innerWidth <= 950) {
                 var prevScrollpos = window.pageYOffset;
                 window.onscroll = function() {
                     var currentScrollPos = window.pageYOffset;
@@ -119,7 +119,7 @@
 						<div class="title"><i class="fas fa-${type_icon}"></i> ${item.title}</div>
 						<div class="desc">${item.description}</div>
 						<div class="done" id="done-${item.id}-container" onclick="done(${item.id})">
-							<a class="btn circle"><i class="fas fa-${item.doneby ? 'check' : 'times'}"></i></a> ${item.doneby ? item.doneby : ''}
+							<a class="btn circle"><i class="fas fa-${item.doneby ? 'check' : 'times'}"></i></a><span>${item.doneby ? item.doneby : ''}</span>
 						</div>
 						<div class="settings-container">
 										<div class="dropdown">
