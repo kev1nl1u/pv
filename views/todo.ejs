@@ -22,11 +22,37 @@
 				<h1 style="margin: 0">UNIPV</h1>
 				<span>todo</span>
 			</a>
-			<a class="sidebar-link aggiungi" onclick="openModal('add-todo')">
+			<a class="sidebar-link aggiungi" onclick="$(`#add-todo select[name='user']`).val(localStorage.getItem('user')); openModal('add-todo')">
                 <span class="material-symbols-outlined">
                     add
                 </span>
             </a>
+			<div class="sidebar-link">
+				<div class="basic-form user">
+					<div class="select user">
+						<select class="select-text" required name="user">
+							<option selected value="" style="display: none;" disabled></option>
+							<option id="kev" value="kev">kev</option>
+							<option id="simo" value="simo">simo</option>
+							<option id="zenel" value="zenel">zenel</option>
+							<option id="tezza" value="tezza">tezza</option>
+							<option id="altro" value="altro">altro</option>
+						</select>
+						<label class="select-label">utente</label>
+					</div>
+				</div>
+				<script>
+					// on dom load set select.user value from localStorage
+					if(localStorage.getItem('user')){
+						$('select[name="user"]').val(localStorage.getItem('user'));
+
+					}
+					// .select.user on change save to localStorage
+					$('select[name="user"]').on('change', function() {
+						localStorage.setItem('user', $(this).val());
+					});
+				</script>
+			</div>
         </div>
     </div>
 
@@ -89,7 +115,7 @@
 				} 
 				$('#list').append(`
 					<div class="list-elem" id="${item.id}">
-						<div class="author"><i class="fa-solid fa-user"></i> ${item.author}</div>
+						<div class="user"><i class="fa-solid fa-user"></i> ${item.user}</div>
 						<div class="title"><i class="fas fa-${type_icon}"></i> ${item.title}</div>
 						<div class="desc">${item.description}</div>
 						<div class="done" id="done-${item.id}-container" onclick="done(${item.id})">
@@ -149,7 +175,7 @@
 					$('#edit-todo select[name="type"]').val(data.type);
 					$('#edit-todo input[name="title"]').val(data.title);
 					$('#edit-todo input[name="description"]').val(data.description);
-					$('#edit-todo select[name="author"]').val(data.author);
+					$('#edit-todo select[name="user"]').val(data.user);
 					// open modal
 					openModal('edit-todo');
 				}
@@ -174,16 +200,10 @@
 			if($(`#${id} .done i`).hasClass('fa-times')){
 				// uncheck
 				$(`#dropdown-${id}`).prop('checked', false);
-				// set icon to loading - not really needed
-				var btn = document.getElementById(`done-${id}-container`);
-				var width = window.getComputedStyle(btn).getPropertyValue('width');
-				var height = window.getComputedStyle(btn).getPropertyValue('height');
-				btn.style.width = width;
-				btn.style.height = height;
-				btn.innerHTML = "<div class='submit-lds-grid'><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>";
 				// get data from backend /api/get/:id
 				$('#done-todo form').attr('action', `/api/doneby/${id}`);
 				$('#done-todo #title').html($(`#${id} .title`).html());
+				$('#done-todo select[name="doneby"]').val(localStorage.getItem('user'));
 				// open modal
 				openModal('done-todo');
 			}else{
@@ -201,6 +221,9 @@
 					success: function(data) {
 						// remove check
 						$(`#${id} .done`).html(`<i class="fas fa-times"></i>`);
+						// set width and height back
+						btn.style.width = '';
+						btn.style.height = '';
 					}
 				});
 			}
@@ -247,9 +270,9 @@
 						</div>
 					</div>
 					<div class="input-container">
-						<!-- author temp / add login and accounts -->
+						<!-- user temp / add login and accounts -->
 						<div class="select">
-							<select class="select-text" required name="author">
+							<select class="select-text" required name="user">
 								<option selected value="" style="display: none;" disabled></option>
 								<option id="kev" value="kev">kev</option>
 								<option id="simo" value="simo">simo</option>
@@ -297,7 +320,7 @@
 						</div>
 					</div>
 					<div class="select">
-						<select class="select-text" required name="author">
+						<select class="select-text" required name="user">
 							<option selected value="" style="display: none;" disabled></option>
 							<option id="kev" value="kev">kev</option>
 							<option id="simo" value="simo">simo</option>
@@ -337,6 +360,14 @@
 		</div>
 	</div>
 
+	<script>
+		// on click esc close modal
+		$(document).keyup(function(e) {
+			if (e.key === "Escape") {
+				$('.modal').css('display', 'none');
+			}
+		});
+	</script>
 
 	<script src="/js/submit-loading.js"></script>
 </body>

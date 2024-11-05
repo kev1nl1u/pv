@@ -45,12 +45,12 @@ a:hover {
 	.list-elem{
 		display: grid;
 		grid-template-areas: 
-			'author author author author settings'
-			'title title title title settings'
-			'desc desc desc desc done';
+			'user user user user settings settings'
+			'title title title title settings settings'
+			'desc desc desc desc done done';
 		gap: 10px;
 	}
-	.author{ grid-area: author; }
+	.user{ grid-area: user; }
 	.title{ grid-area: title; }
 	.desc{ grid-area: desc; }
 	.done{ grid-area: done; }
@@ -93,8 +93,21 @@ a:hover {
 	width: auto !important;
 }
 .aggiungi span{
-	height: 100% !important;
+	height: 56px !important;
 	border-radius: 50% !important;
+}
+
+.basic-form.user, .select.user{
+	width: 100%;
+}
+.select.user .select-text{
+	color: var(--muted);
+}
+.select.user .select-text:focus{
+	color: var(--on-surface);
+}
+.select.user::after{
+    display: none;
 }
 
 
@@ -500,7 +513,7 @@ code, .mono{
 	}
 }
 .sidebar-link {
-	height: 20%;
+	/*height: 20%;*/
 	width: 80px;
 	display: flex;
 	align-items: center;
@@ -963,7 +976,7 @@ code, .mono{
 		align-items: center;
 	}
 	.sidebar-link {
-		height: 100%;
+		/*height: 100%;*/
 		width: 80px;
 		display: flex;
 		align-items: center;

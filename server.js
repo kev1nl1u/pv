@@ -9,7 +9,7 @@ CREATE TABLE todo (
 	type VARCHAR, -- spesa, ecc
 	title VARCHAR,
 	description VARCHAR,
-	author VARCHAR,
+	user VARCHAR,
 	doneby VARCHAR DEFAULT NULL
 );
 
@@ -53,8 +53,8 @@ app.get('/todo', async (req, res) => {
 
 app.post('/api/add', async (req, res) => {
 	try {
-		const { type, title, description, author} = req.body;
-		const newTodo = await pool.query("INSERT INTO todo (type, title, description, author) VALUES($1, $2, $3, $4) RETURNING *", [type, title, description, author]);
+		const { type, title, description, user} = req.body;
+		const newTodo = await pool.query("INSERT INTO todo (type, title, description, user) VALUES($1, $2, $3, $4) RETURNING *", [type, title, description, user]);
 		res.redirect('/todo');
 	} catch (error) {
 		console.error(error.message);
@@ -74,8 +74,8 @@ app.get('/api/get/:id', async (req, res) => {
 app.post('/api/update/:id', async (req, res) => {
 	try {
 		const { id } = req.params;
-		const { type, title, description, author } = req.body;
-		const updatedTodo = await pool.query("UPDATE todo SET type = $1, title = $2, description = $3, author = $4 WHERE id = $5", [type, title, description, author, id]);
+		const { type, title, description, user } = req.body;
+		const updatedTodo = await pool.query("UPDATE todo SET type = $1, title = $2, description = $3, user = $4 WHERE id = $5", [type, title, description, user, id]);
 		res.redirect('/todo');
 	} catch (error) {
 		console.error(error.message);
@@ -112,17 +112,6 @@ app.get('/api/undone/:id', async (req, res) => {
 		console.error(error.message);
 	}
 });
-
-/*
-$.ajax({
-				url: `/api/done/${id}`,
-				type: 'GET',
-				success: function(data) {
-					// update icon
-					$(`#${id} .done i`).removeClass('fa-times fa-check').addClass(`fa-${data.done ? 'check' : 'times'}`);
-				}
-			});
-*/
 
 
 /* set static folder for css etc */
