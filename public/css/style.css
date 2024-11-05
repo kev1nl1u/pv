@@ -87,6 +87,16 @@ a:hover {
 	}
 }
 
+.aggiungi{
+	background-color: var(--primary);
+	border-radius: 50%;
+	width: auto !important;
+}
+.aggiungi span{
+	height: 100% !important;
+	border-radius: 50% !important;
+}
+
 
 /* modal */
 .modal-inner::-webkit-scrollbar {
@@ -500,7 +510,7 @@ code, .mono{
 	font-size: 12px;
 }
 .sidebar-link span.material-symbols-outlined {
-	margin-bottom: 4px;
+	/*margin-bottom: 4px;*/
 	border-radius: 16px;
 	width: 56px;
 	height: 32px;

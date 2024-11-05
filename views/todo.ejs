@@ -22,17 +22,10 @@
 				<h1 style="margin: 0">UNIPV</h1>
 				<span>todo</span>
 			</a>
-            <a class="sidebar-link active" id="lista-btn" href="./todo">
-                <span class="material-symbols-outlined">
-                    list
-                </span>
-                <span class="sidebar-link-text">listapv</span>
-            </a>
-            <a class="sidebar-link" onclick="openModal('add-todo')">
+			<a class="sidebar-link aggiungi" onclick="openModal('add-todo')">
                 <span class="material-symbols-outlined">
                     add
                 </span>
-                <span class="sidebar-link-text">aggiungi</span>
             </a>
         </div>
     </div>
@@ -153,10 +146,10 @@
 					// fill form
 					// form action /api/update/:id
 					$('#edit-todo form').attr('action', `/api/update/${id}`);
-					$('#edit-todo select').val(data.type);
+					$('#edit-todo select[name="type"]').val(data.type);
 					$('#edit-todo input[name="title"]').val(data.title);
 					$('#edit-todo input[name="description"]').val(data.description);
-					$('#edit-todo input[name="author"]').val(data.author);
+					$('#edit-todo select[name="author"]').val(data.author);
 					// open modal
 					openModal('edit-todo');
 				}
@@ -221,8 +214,7 @@
 						<div class="two-inputs-container">
 							<div class="select">
 								<select class="select-text" required name="type">
-									<option selected value="" style="display: none;" disabled></option>
-									<option id="spesa" value="spesa">spesa</option>
+									<option selected id="spesa" value="spesa">spesa</option>
 									<option id="todo" value="todo">da fare</option>
 									<option id="altro" value="altro">altro</option>
 								</select>
@@ -252,7 +244,7 @@
 								<option id="tutti" value="tutti">tutti</option>
 								<option id="altro" value="altro">altro</option>
 							</select>
-							<label class="select-label">autore</label>
+							<label class="select-label">per</label>
 						</div>
                     </div>
 					<button type="submit" class="btn filled submit-btn">aggiungi</button>
@@ -290,13 +282,18 @@
 							<label>descrizione</label>
 						</div>
 					</div>
-					<div class="input-container">
-						<!-- author temp / add login and accounts -->
-						<div class="material-textfield">
-							<input placeholder="" type="text" name="author">
-							<label>autore</label>
-						</div>
-                    </div>
+					<div class="select">
+						<select class="select-text" required name="author">
+							<option selected value="" style="display: none;" disabled></option>
+							<option id="kev" value="kev">kev</option>
+							<option id="simo" value="simo">simo</option>
+							<option id="zenel" value="zenel">zenel</option>
+							<option id="tezza" value="tezza">tezza</option>
+							<option id="tutti" value="tutti">tutti</option>
+							<option id="altro" value="altro">altro</option>
+						</select>
+						<label class="select-label">per</label>
+					</div>
 					<button type="submit" class="btn filled submit-btn">aggiorna</button>
 				</form>
 			</div>
