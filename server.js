@@ -54,7 +54,6 @@ app.get('/todo', async (req, res) => {
 app.post('/api/add', async (req, res) => {
 	try {
 		const { type, title, description, user} = req.body;
-		console.log(user);
 		const newTodo = await pool.query("INSERT INTO todo (type, title, description, foruser) VALUES($1, $2, $3, $4) RETURNING *", [type, title, description, user]);
 		res.redirect('/todo');
 	} catch (error) {
