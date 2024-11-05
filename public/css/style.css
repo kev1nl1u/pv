@@ -38,8 +38,13 @@ a:hover {
 	width: 100%;
 	display: grid;
 	grid-template-columns: 1fr 1fr 2fr 1fr 50px;
-	padding: 15px;
 	border-radius: 5px;
+}
+.list-elem .user,.list-elem .title,.list-elem .desc{
+	padding: 15px;
+}
+.list-elem .done,.list-elem .settings{
+	padding: max(15px, 0);
 }
 @media only screen and (max-width: 600px) {
 	.list-elem{
@@ -1038,7 +1043,7 @@ code, .mono{
 
 a.btn.circle{
 	border-radius: 50%;
-	height: 40px; width: 40px;
+	height: 35px; width: 35px;
 	display: grid;
 	place-items: center;
 }
@@ -1058,13 +1063,15 @@ a.btn.circle{
 .dropdown {
 	position: absolute;
 	height: 100%;
+	display: grid;
+	place-items: center;
 	/*filter: url(#goo);*/
   }
   .dropdown__face, .dropdown__items{
-	padding: 10px; display: grid; place-items: center;
+	display: grid; place-items: center;
   }
-  .dropdown__face{ border-radius: 50%; height: 40px; width: 40px; }
-  .dropdown__items{ border-radius: 25px; }
+  .dropdown__face{ border-radius: 50%; height: 35px; width: 35px; }
+  .dropdown__items{ border-radius: 25px; padding: 10px; }
   .list-elem:nth-child(odd) .dropdown__items, .list-elem:nth-child(odd) .dropdown__face{
 	background-color: var(--surface);
   }
@@ -1072,7 +1079,6 @@ a.btn.circle{
 	background-color: var(--surface-variant);
   }
   .dropdown__face {
-	display: block;
 	position: relative;
 	z-index: 1;
   }
@@ -1108,7 +1114,7 @@ a.btn.circle{
   }
   
   .dropdown input:checked ~ .dropdown__items {
-	top: 85%;
+	top: 75%;
 	visibility: visible;
 	opacity: 1;
 	border: 1px solid var(--on-surface)
