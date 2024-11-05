@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="css/style.css" type="text/css">
+	<link rel="stylesheet" href="css/page.css" type="text/css">
+	<link rel="stylesheet" href="css/dark.css" type="text/css">
+	<!-- font awesome -->
+	<script src="https://kit.fontawesome.com/95ae55bd9a.js" crossorigin="anonymous"></script>
+	<!-- material design -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+	<!-- jquery -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<title>Lista</title>
+</head>
+<body>
+
+	<div class="sidebar">
+        <div class="sidebar-inner">
+			<a class="sidebar-link" id="home" href="/">
+				<h1 style="margin: 0">UNIPV</h1>
+				<span>todo</span>
+			</a>
+			<a class="sidebar-link aggiungi" onclick="openModal('add-todo')">
+                <span class="material-symbols-outlined">
+                    add
+                </span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // on scroll down hide / up show sidebar-link-text on mobile
+        function nav(){
+            if (window.innerWidth <= 600) {
+                var prevScrollpos = window.pageYOffset;
+                window.onscroll = function() {
+                    var currentScrollPos = window.pageYOffset;
+                    if (prevScrollpos > currentScrollPos || (window.innerHeight + window.pageYOffset) >= document.body.offsetHeight-1 || currentScrollPos < 10) {
+                        $(".sidebar-link-text").slideDown(300);
+                        $(".sidebar").css("height", "78px");
+                    } else {
+                        $(".sidebar-link-text").slideUp(300);
+                        $(".sidebar").css("height", "58px");
+                    }
+                    prevScrollpos = currentScrollPos;
+                }
+            } else {
+                // default size
+                $(".sidebar").css("height", "100%");
+                $(".sidebar-link-text").show();
+                window.onscroll = null;
+            }
+        }
+        nav();
+        window.onresize = function() {
+            nav();
+        };
+    </script>
+
+
+	<div class="main-container">
+        <div class="main">
+			<div class="flex-center-y" id="list">
+			</div>
+		</div>
+	</div>
+
+	<script>
+		var lista = <%- JSON.stringify(lista) %>;
+		console.log(lista);
+		// print in #list
+		// on dom load
+		$(document).ready(() => {
+			lista.forEach((item) => {
+				var type_icon = '';
+				switch(item.type){
+					case 'spesa':
+						type_icon = 'shopping-cart';
+						break;
+					case 'todo':
+						type_icon = 'list';
+						break;
+					case 'altro':
+					default:
+						type_icon = 'ellipsis-h';
+						break;
+				} 
+				$('#list').append(`
+					<div class="list-elem" id="${item.id}">
+						<div class="author"><i class="fa-solid fa-user"></i> ${item.author}</div>
+						<div class="title"><i class="fas fa-${type_icon}"></i> ${item.title}</div>
+						<div class="desc">${item.description}</div>
+						<div class="done" onclick="done(${item.id})">
+							<i class="fas fa-${item.doneby ? 'check' : 'times'}"></i> ${item.doneby ? item.doneby : ''}
+						</div>
+						<div class="settings-container">
+										<div class="dropdown">
+											<input type="checkbox" id="dropdown-${item.id}">
+										
+											<label class="dropdown__face" for="dropdown-${item.id}">
+												<div class="dropdown__text"><i class="fa-solid fa-gear"></i></div>
+											</label>
+										
+											<ul class="dropdown__items">
+												<li onclick="edit(${item.id})"><i class="fa-solid fa-pen-to-square"></i></li>
+												<li onclick="del(${item.id})"><i class="fa-solid fa-trash"></i></li>
+											</ul>
+										</div>
+										
+										<svg>
+											<filter id="goo">
+											<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+											<feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+											<feBlend in="SourceGraphic" in2="goo" />
+											</filter>
+										</svg>
+						</div>
+					</div>
+				`);
+			});
+		});
+	</script>
+
+	<script>
+		// listener if a checkbox is checked, uncheck all others
+		$(document).on('change', 'input[type="checkbox"]', function() {
+			$('input[type="checkbox"]').not(this).prop('checked', false);
+		});
+		// on any click outside the dropdown, uncheck all
+		$(document).on('click', function(e) {
+			if (!$(e.target).closest('.dropdown').length) {
+				$('input[type="checkbox"]').prop('checked', false);
+			}
+		});
+
+		function edit(id){
+			// uncheck
+			$(`#dropdown-${id}`).prop('checked', false);
+			// get data from backend /api/get/:id
+			$.ajax({
+				url: `/api/get/${id}`,
+				type: 'GET',
+				success: function(data) {
+					// fill form
+					// form action /api/update/:id
+					$('#edit-todo form').attr('action', `/api/update/${id}`);
+					$('#edit-todo select[name="type"]').val(data.type);
+					$('#edit-todo input[name="title"]').val(data.title);
+					$('#edit-todo input[name="description"]').val(data.description);
+					$('#edit-todo select[name="author"]').val(data.author);
+					// open modal
+					openModal('edit-todo');
+				}
+			});
+		}
+
+		function del(id){
+			// send to backend /api/del/:id
+			$.ajax({
+				url: `/api/delete/${id}`,
+				type: 'GET',
+				success: function(data) {
+					// remove element
+					$(`#${id}`).remove();
+				}
+			});
+		}
+
+		function done(id){
+
+			// if is not done
+			if($(`#${id} .done i`).hasClass('fa-times')){
+				// uncheck
+				$(`#dropdown-${id}`).prop('checked', false);
+				// get data from backend /api/get/:id
+				$('#done-todo form').attr('action', `/api/doneby/${id}`);
+				$('#done-todo #title').html($(`#${id} .title`).html());
+				// open modal
+				openModal('done-todo');
+			}else{
+				// send to backend /api/undone/:id
+				$.ajax({
+					url: `/api/undone/${id}`,
+					type: 'GET',
+					success: function(data) {
+						// remove check
+						$(`#${id} .done`).html(`<i class="fas fa-times"></i>`);
+					}
+				});
+			}
+		}
+	</script>
+
+
+
+	<!-- modal -->
+	<script>
+		function closeModal(id) {
+			document.getElementById(id).style.display = "none";
+		}
+		function openModal(id) {
+			document.getElementById(id).style.display = "flex";
+		}
+	</script>
+	<div id="add-todo" class="modal">
+		<div class="modal-inner">
+			<span class="btn text modal-close" onclick="closeModal('add-todo')">&times;</span>
+			<div style="margin: 50px 0; width: min(100%, 600px); height: 100%;">
+				<h2>aggiungi</h2>
+				<form method="POST" action="/api/add" class="basic-form">
+					<div class="input-container">
+						<div class="two-inputs-container">
+							<div class="select">
+								<select class="select-text" required name="type">
+									<option selected id="spesa" value="spesa">spesa</option>
+									<option id="todo" value="todo">da fare</option>
+									<option id="altro" value="altro">altro</option>
+								</select>
+								<label class="select-label">tipo</label>
+							</div>
+							<div class="material-textfield">
+								<input placeholder="" type="text" required name="title" autocomplete="off">
+								<label>titolo</label>
+							</div>
+						</div>
+					</div>
+					<div class="input-container">
+						<div class="material-textfield">
+							<input placeholder="" type="text" name="description" autocomplete="off">
+							<label>descrizione</label>
+						</div>
+					</div>
+					<div class="input-container">
+						<!-- author temp / add login and accounts -->
+						<div class="select">
+							<select class="select-text" required name="author">
+								<option selected value="" style="display: none;" disabled></option>
+								<option id="kev" value="kev">kev</option>
+								<option id="simo" value="simo">simo</option>
+								<option id="zenel" value="zenel">zenel</option>
+								<option id="tezza" value="tezza">tezza</option>
+								<option id="tutti" value="tutti">tutti</option>
+								<option id="altro" value="altro">altro</option>
+							</select>
+							<label class="select-label">per</label>
+						</div>
+                    </div>
+					<button type="submit" class="btn filled submit-btn">aggiungi</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="edit-todo" class="modal">
+		<div class="modal-inner">
+			<span class="btn text modal-close" onclick="closeModal('edit-todo')">&times;</span>
+			<div style="margin: 50px 0; width: min(100%, 600px); height: 100%;">
+				<h2>modifica</h2>
+				<form method="POST" action="/api/update/:id" class="basic-form">
+					<div class="input-container">
+						<div class="two-inputs-container">
+							<div class="select">
+								<select class="select-text" required name="type">
+									<option selected value="" style="display: none;" disabled></option>
+									<option id="spesa" value="spesa">spesa</option>
+									<option id="todo" value="todo">da fare</option>
+									<option id="altro" value="altro">altro</option>
+								</select>
+								<label class="select-label">tipo</label>
+							</div>
+							<div class="material-textfield">
+								<input placeholder="" type="text" required name="title">
+								<label>titolo</label>
+							</div>
+						</div>
+					</div>
+					<div class="input-container">
+						<div class="material-textfield">
+							<input placeholder="" type="text" name="description">
+							<label>descrizione</label>
+						</div>
+					</div>
+					<div class="select">
+						<select class="select-text" required name="author">
+							<option selected value="" style="display: none;" disabled></option>
+							<option id="kev" value="kev">kev</option>
+							<option id="simo" value="simo">simo</option>
+							<option id="zenel" value="zenel">zenel</option>
+							<option id="tezza" value="tezza">tezza</option>
+							<option id="tutti" value="tutti">tutti</option>
+							<option id="altro" value="altro">altro</option>
+						</select>
+						<label class="select-label">per</label>
+					</div>
+					<button type="submit" class="btn filled submit-btn">aggiorna</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="done-todo" class="modal">
+		<div class="modal-inner">
+			<span class="btn text modal-close" onclick="closeModal('done-todo')">&times;</span>
+			<div style="margin: 50px 0; width: min(100%, 600px);">
+				<h2><span id="title"></span> completato da:</h2>
+				<form method="POST" action="/api/doneby/:id" class="basic-form">
+					<div class="input-container">
+							<div class="material-textfield">
+								<input placeholder="" type="text" required name="doneby">
+								<label>tu</label>
+							</div>
+						</div>
+					</div>
+					<button type="submit" class="btn filled submit-btn">completato</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+	<script src="/js/submit-loading.js"></script>
+</body>
+</html>
