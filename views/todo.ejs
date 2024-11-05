@@ -92,7 +92,7 @@
 						<div class="author"><i class="fa-solid fa-user"></i> ${item.author}</div>
 						<div class="title"><i class="fas fa-${type_icon}"></i> ${item.title}</div>
 						<div class="desc">${item.description}</div>
-						<div class="done" onclick="done(${item.id})">
+						<div class="done" id="done-${item.id}-container" onclick="done(${item.id})">
 							<i class="fas fa-${item.doneby ? 'check' : 'times'}"></i> ${item.doneby ? item.doneby : ''}
 						</div>
 						<div class="settings-container">
@@ -174,12 +174,26 @@
 			if($(`#${id} .done i`).hasClass('fa-times')){
 				// uncheck
 				$(`#dropdown-${id}`).prop('checked', false);
+				// set icon to loading - not really needed
+				var btn = document.getElementById(`done-${id}-container`);
+				var width = window.getComputedStyle(btn).getPropertyValue('width');
+				var height = window.getComputedStyle(btn).getPropertyValue('height');
+				btn.style.width = width;
+				btn.style.height = height;
+				btn.innerHTML = "<div class='submit-lds-grid'><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>";
 				// get data from backend /api/get/:id
 				$('#done-todo form').attr('action', `/api/doneby/${id}`);
 				$('#done-todo #title').html($(`#${id} .title`).html());
 				// open modal
 				openModal('done-todo');
 			}else{
+				// set icon to loading
+				var btn = document.getElementById(`done-${id}-container`);
+				var width = window.getComputedStyle(btn).getPropertyValue('width');
+				var height = window.getComputedStyle(btn).getPropertyValue('height');
+				btn.style.width = width;
+				btn.style.height = height;
+				btn.innerHTML = "<div class='submit-lds-grid'><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>";
 				// send to backend /api/undone/:id
 				$.ajax({
 					url: `/api/undone/${id}`,
@@ -306,12 +320,16 @@
 			<div style="margin: 50px 0; width: min(100%, 600px);">
 				<h2><span id="title"></span> completato da:</h2>
 				<form method="POST" action="/api/doneby/:id" class="basic-form">
-					<div class="input-container">
-							<div class="material-textfield">
-								<input placeholder="" type="text" required name="doneby">
-								<label>tu</label>
-							</div>
-						</div>
+					<div class="select">
+						<select class="select-text" required name="doneby">
+							<option selected value="" style="display: none;" disabled></option>
+							<option id="kev" value="kev">kev</option>
+							<option id="simo" value="simo">simo</option>
+							<option id="zenel" value="zenel">zenel</option>
+							<option id="tezza" value="tezza">tezza</option>
+							<option id="altro" value="altro">altro</option>
+						</select>
+						<label class="select-label">fatto da</label>
 					</div>
 					<button type="submit" class="btn filled submit-btn">completato</button>
 				</form>
