@@ -126,13 +126,13 @@
 
 			<div class="filter-container">
 				<div class="filters filter-done">
-					<a class="btn outlined" onclick="filter(this)">todo</a>
-					<a class="btn outlined" onclick="filter(this)">fatto</a>
+					<a class="btn outlined" onclick="filter(this)" id="filter-todo-btn">todo</a>
+					<a class="btn outlined" onclick="filter(this)" id="filter-fatto-btn">fatto</a>
 				</div>
 				<div class="filters filter-type">
-					<a class="btn outlined" onclick="filter(this)">spesa</a>
-					<a class="btn outlined" onclick="filter(this)">task</a>
-					<a class="btn outlined" onclick="filter(this)">altro</a>
+					<a class="btn outlined" onclick="filter(this)" id="filter-spesa-btn">spesa</a>
+					<a class="btn outlined" onclick="filter(this)" id="filter-task-btn">task</a>
+					<a class="btn outlined" onclick="filter(this)" id="filter-altro-btn">altro</a>
 				</div>
 			</div>
 
@@ -206,10 +206,15 @@
 				elems.push($(generateItemHTML(item)));	
 			});
 			// set active class
-			$(e).siblings().removeClass('filled').addClass('outlined');
-			$(e).toggleClass('outlined').toggleClass('filled');
+			if(e){
+				$(e).siblings().removeClass('filled').addClass('outlined');
+				$(e).toggleClass('outlined').toggleClass('filled');
+			}
 			var done = $('.filter-done .filled').html();
 			var type = $('.filter-type .filled').html();
+			// save in localStorage
+			localStorage.setItem('todo-filter-done', done);
+			localStorage.setItem('todo-filter-type', type);
 			console.log(done, type);
 			// filter
 			// remove elements from elems that don't match the filter
@@ -240,6 +245,12 @@
 			});
 
 		}
+
+		$(document).ready(() => {
+			$(`#filter-${localStorage.getItem('todo-filter-done')}-btn`).removeClass('outlined').addClass('filled');
+			$(`#filter-${localStorage.getItem('todo-filter-type')}-btn`).removeClass('outlined').addClass('filled');
+			filter();
+		});
 	</script>
 
 	<script>
