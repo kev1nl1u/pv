@@ -355,14 +355,14 @@
 	<script>
 		// if select choose altro, show input
 		$('.modal select[name="user"]').on('change', function() {
-			if($(this).val() === 'altro'){
+			if($(this).val() === 'Altro'){
 				// append outside of input container but after input.container
 				this.name = 'altro';
 				$(this).parent().parent().after(`
 					<div class="input-container" id="altro-input">
 						<div class="material-textfield">
 							<input placeholder="" type="text" required name="user" autocomplete="off">
-							<label>altro</label>
+							<label>Altro</label>
 						</div>
 					</div>
 				`);
