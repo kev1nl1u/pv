@@ -43,7 +43,7 @@ a:hover {
 .list-elem{
 	width: 100%;
 	display: grid;
-	grid-template-columns: 1fr 1fr 2fr 1fr 50px;
+	/*grid-template-columns: 1fr 1fr 2fr 1fr 50px; inline */
 	border-radius: 5px;
 	padding: 15px;
 	align-items: center;
@@ -66,36 +66,7 @@ a:hover {
 .list-elem .fa-check{
 	color: #8dc048;
 }
-.list-elem .done span{
-	transform: rotate(-90deg);
-	position: absolute;
-	right: -25px;
-	color: var(--muted);
-}
-@media only screen and (max-width: 950px) {
-	.list-elem{
-		display: grid;
-		grid-template-areas: 
-			'user user user user settings settings'
-			'user user user user settings settings'
-			'title title title title settings settings'
-			'title title title title done done'
-			'desc desc desc desc done done'
-			'desc desc desc desc done done';
-		gap: 10px;
-	}
-	.user{ grid-area: user; }
-	.title{ grid-area: title; }
-	.desc{ grid-area: desc; }
-	.done{ grid-area: done; }
-	.settings-container{ grid-area: settings; }
-	.list-elem .user,.list-elem .title,.list-elem .desc, .list-elem .done,.list-elem .settings{
-		padding: 0;
-	}
-	.list-elem{
-		padding: 15px;
-	}
-}
+
 
 #home{
 	transform: rotate(-90deg); text-align: center;
@@ -161,6 +132,8 @@ a:hover {
     gap: 20px;
     overflow-y: scroll;
     text-align: center;
+	width: 100%;
+	max-width: 980px;
 }
 
 .modal-close{
@@ -694,6 +667,7 @@ code, .mono{
 /*** TEXT FIELD ***/
 .material-textfield {
 	position: relative;
+	width: 100%;
 }
 
 .material-textfield label {
@@ -721,6 +695,7 @@ code, .mono{
 	color: var(--on-surface);
 	transition: 0.1s ease-out;
 	background-color: var(--surface);
+	width: 100%;
 }
 
 .material-textfield input:focus {

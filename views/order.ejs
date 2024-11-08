@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="css/style.css" type="text/css">
+	<link rel="stylesheet" href="css/page.css" type="text/css">
+	<link rel="stylesheet" href="css/dark.css" type="text/css">
+	<!-- font awesome -->
+	<script src="https://kit.fontawesome.com/95ae55bd9a.js" crossorigin="anonymous"></script>
+	<!-- material design -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+	<!-- jquery -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<style>
+		.list-elem{
+			grid-template-columns: 0.25fr 1fr 50px 50px;
+			padding: 10px 15px;
+			gap: 15px;
+		}
+		.list-elem.default{
+			grid-template-columns: 0.25fr 1fr 100px;
+		}
+		@media screen and (max-width: 600px){
+			.list-elem{
+				grid-template-columns: 0.5fr 1fr 35px 35px;
+			}
+			.list-elem.default{
+				grid-template-columns: 0.5fr 1fr 50px;
+			}
+			
+		}
+		.list-elem *{
+			display: flex;
+			align-items: center;
+			gap: 5px;
+		}
+		.list-elem.default .send, .list-elem.default .edit{
+			width: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.item-input{
+			padding: 10px !important;
+			height: 18px;
+			outline: none !important;
+			border-bottom: 1px solid var(--muted) !important;
+			border-radius: 10px !important;
+		}
+		.list-elem:nth-child(odd) .item-input{
+			background-color: var(--surface);
+		}
+		.list-elem:nth-child(even) .item-input{
+			background-color: var(--surface-variant);
+		}
+		.list-elem:nth-child(even) label{
+			background-color: var(--surface-variant);
+		}
+		#def-separator{
+			padding: 10px 15px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+		}
+	</style>
+	<title>Lista</title>
+</head>
+<body>
+
+	<div class="sidebar">
+        <div class="sidebar-inner">
+			<a class="sidebar-link" id="home" href="/">
+				<h1 style="margin: 0">UNIPV</h1>
+				<span>order</span>
+			</a>
+			<a class="sidebar-link aggiungi" onclick="$(`#add-order select[name='user']`).val(localStorage.getItem('order-user')); openModal('add-order')">
+                <span class="material-symbols-outlined">
+                    add
+                </span>
+            </a>
+			<div class="sidebar-link">
+				<div class="basic-form user">
+					<div class="select user">
+						<select class="select-text" required name="user" id="user-choose">
+							
+						</select>
+						<label class="select-label">Utente</label>
+					</div>
+				</div>
+				<script>
+					// .select.user on change save to localStorage
+					$('#user-choose').on('change', function() {
+						localStorage.setItem('order-user', $(this).val());
+					});
+				</script>
+			</div>
+        </div>
+    </div>
+
+    <script>
+        // on scroll down hide / up show sidebar-link-text on mobile
+        function nav(){
+            if (window.innerWidth <= 950) {
+                var prevScrollpos = window.pageYOffset;
+                window.onscroll = function() {
+                    var currentScrollPos = window.pageYOffset;
+                    if (prevScrollpos > currentScrollPos || (window.innerHeight + window.pageYOffset) >= document.body.offsetHeight-1 || currentScrollPos < 10) {
+                        $(".sidebar-link-text").slideDown(300);
+                        $(".sidebar").css("height", "78px");
+                    } else {
+                        $(".sidebar-link-text").slideUp(300);
+                        $(".sidebar").css("height", "58px");
+                    }
+                    prevScrollpos = currentScrollPos;
+                }
+            } else {
+                // default size
+                $(".sidebar").css("height", "100%");
+                $(".sidebar-link-text").show();
+                window.onscroll = null;
+            }
+        }
+        nav();
+        window.onresize = function() {
+            nav();
+        };
+    </script>
+
+
+	<div class="main-container">
+        <div class="main" style="margin-top: 15px">
+			<div class="flex-center-y" id="list">
+				
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const lista = <%- JSON.stringify(lista) %>;
+		console.log(lista);
+		// print in #list
+		// on dom load
+		$(document).ready(() => {
+			// print default for id [1,8]
+			lista.slice(0, 8).forEach(item => {
+				$('#list').append(generateDefaultItemHTML(item));
+			});
+			var html = "<div id='def-separator'><p id='ordini-aggiuntivi' style='font-weight: 600'>";
+			if(lista.length > 8) html += "ordini aggiuntivi:";
+			html += "</p><a class='btn filled' onclick='azzera()'>Azzera</a></div><span></span>"; // span for odd - even bgcolor
+			$('#list').append(html);
+			// Print the rest of the items
+			lista.slice(8).forEach(item => {
+				$('#list').append(generateItemHTML(item));
+			});
+
+		});
+
+		function generateItemHTML(item){
+			return `<div class="list-elem" id="${item.id}">
+						<div class="user"><i class="fa-solid fa-user"></i> <span id="user-${item.id}">${item.foruser}</span></div>
+						<div class="cibo"><i class="fa-solid fa-utensils"></i> ${item.cibo}</div>
+						<div class="edit" onclick="edit(${item.id})">
+							<a class="btn circle"><i class="fa-solid fa-pen-to-square"></i></a>
+						</div>
+						<div class="del" onclick="del(${item.id})">
+							<a class="btn circle"><i class="fa-solid fa-trash"></i></a>
+						</div>
+					</div>
+				`;
+		}
+
+		function generateDefaultItemHTML(item){
+			// default item id 1-8
+			return `<div class="list-elem default" id="${item.id}">
+						<div class="user"><i class="fa-solid fa-user"></i> <span id="user-${item.id}">${item.foruser}</span></div>
+						<div class="cibo"><i class="fa-solid fa-utensils"></i> ${ item.cibo ? item.cibo : `<div class="material-textfield"><input placeholder="" type="text" required name="cibo" autocomplete="off" class="item-input"><label>Cibo</label></div>` }</div>
+						${item.cibo ? `<div class="edit" onclick="editDefault(${item.id})"><a class="btn circle"><i class="fa-solid fa-pen-to-square"></i></a></div>` : `<div class="send" id="send-${item.id}" onclick="send( ${item.id} )"><a class="btn circle"><i class="fa-solid fa-check"></i></a></div>`}
+					</div>
+				`;
+		}
+
+		// on dom loaded cibo input on enter send
+		$(document).ready(function() {
+			$(document).on('keypress', '.item-input', function(e) {
+				if(e.key === 'Enter') {
+					const itemId = $(this).closest('.list-elem').attr('id');
+					send(itemId);
+				}
+			});
+		});
+
+		function edit(id){
+			// get data from backend /api/order/get/:id
+			$.ajax({
+				url: `/api/order/get/${id}`,
+				type: 'GET',
+				success: function(item) {
+					$(`#${id}`).replaceWith(
+						`<div class="list-elem" id="${item.id}">
+							<div class="user">
+								<i class="fa-solid fa-user"></i>
+								<div class="material-textfield">
+									<input placeholder="" type="text" required name="user" autocomplete="off" class="item-input" value="${item.foruser}">
+									<label>per</label>
+								</div>
+							</div>
+							<div class="cibo"><i class="fa-solid fa-utensils"></i> <div class="material-textfield"><input placeholder="" type="text" required name="cibo" autocomplete="off" class="item-input" value="${item.cibo}"><label>Cibo</label></div></div>
+							<div class="send" id="send-${item.id}" onclick="send( ${item.id} )"><a class="btn circle"><i class="fa-solid fa-check"></i></a></div>
+							<div class="del" onclick="del(${item.id})">
+								<a class="btn circle"><i class="fa-solid fa-trash"></i></a>
+							</div>
+						</div>`
+					);
+				}
+			});
+			
+		}
+
+		function editDefault(id){
+			// edit default item without modal
+			// get item data from backend /api/order/get/:id
+			$.ajax({
+				url: `/api/order/get/${id}?user=${$(`#${id}`).text()}`,
+				type: 'GET',
+				success: function(item) {
+					// replace default item with normal item
+					$(`#${id}`).replaceWith(
+						`<div class="list-elem default" id="${item.id}">
+							<div class="user"><i class="fa-solid fa-user"></i> <span>${item.foruser}</span></div>
+							<div class="cibo"><i class="fa-solid fa-utensils"></i> <div class="material-textfield"><input placeholder="" type="text" required name="cibo" autocomplete="off" class="item-input" value="${item.cibo}"><label>cibo</label></div></div>
+							<div class="send" id="send-${item.id}" onclick="send( ${item.id} )"><a class="btn circle"><i class="fa-solid fa-check"></i></a></div>
+						</div>`
+					);
+				}
+			});
+		}
+
+		function del(id){
+			// send to backend /api/del/:id
+			$.ajax({
+				url: `/api/order/delete/${id}`,
+				type: 'GET',
+				success: function(data) {
+					// remove element
+					$(`#${id}`).remove();
+					// remove #ordini-aggiuntivi if <= 9 orders + <span>
+					if($('#list').children().length <= 10) $('#ordini-aggiuntivi').remove();
+				}
+			});
+		}
+
+		function send(id){
+			var btn = document.getElementById(`send-${id}`);
+			var width = window.getComputedStyle(btn).getPropertyValue('width');
+			var height = window.getComputedStyle(btn).getPropertyValue('height');
+			btn.style.width = width;
+			btn.style.height = height;
+			btn.innerHTML = "<div class='submit-lds-grid'><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>";
+			// get data from default item
+			const cibo = $(`#${id} .cibo input`).val();
+			const user = $(`#${id} .user input`).val();
+			// not default need user
+			if(id > 8){
+				if(user === ''){
+					if(cibo === ''){
+						// both null delete
+						del(id);
+						return;
+					}
+					user = '';
+				}
+			}
+			// send to backend /api/order/add
+			$.ajax({
+				url: `/api/order/update/${id}`,
+				type: 'POST',
+				data: {
+					user: user,
+					cibo: cibo
+				},
+				success: function(data) {
+					// remove input and set as normal item 
+					if(id < 9) $(`#${id}`).replaceWith(generateDefaultItemHTML(data));
+					else $(`#${id}`).replaceWith(generateItemHTML(data));
+				}
+			});
+		}
+
+		function azzera(confirm = false){
+			if(confirm){
+				// send to backend /api/order/azzera
+				$.ajax({
+					url: '/api/order/azzera',
+					type: 'GET',
+					success: function(data) {
+						location.reload();
+					}
+				});
+			}else openModal('azzera-modal');
+		}
+	</script>
+
+	<!-- modal -->
+	<script>
+		function closeModal(id) {
+			document.getElementById(id).style.display = "none";
+		}
+		function openModal(id) {
+			document.getElementById(id).style.display = "flex";
+		}
+	</script>
+	<div id="add-order" class="modal">
+		<div class="modal-inner">
+			<span class="btn text modal-close" onclick="closeModal('add-order')">&times;</span>
+			<div class="modal-inner-spacing">
+				<h2>Aggiungi</h2>
+				<form method="POST" action="/api/order/add" class="basic-form">
+					<div class="input-container">
+						<div class="select">
+							<select class="select-text" required name="user">
+								
+							</select>
+							<label class="select-label">Per</label>
+						</div>
+                    </div>
+					<div class="input-container">
+						<div class="material-textfield">
+							<input placeholder="" type="text" required name="cibo" autocomplete="off">
+							<label>Cibo</label>
+						</div>
+					</div>
+					<button type="submit" class="btn filled submit-btn">Aggiungi</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="azzera-modal" class="modal">
+		<div class="modal-inner">
+			<span class="btn text modal-close" onclick="closeModal('azzera-modal')">&times;</span>
+			<div class="modal-inner-spacing">
+				<h2>Azzerare?</h2>
+				<p>Azzerare tutti gli ordini e ricominciare?</p>
+				<div style="display: flex; justify-content: center; width: 100%; gap: 15px;">
+					<button class="btn" onclick="closeModal('azzera-modal')">No, mantieni</button>
+					<button class="btn filled" onclick="azzera(true)">Sì, azzera</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// if select choose altro, show input
+		$('.modal select[name="user"]').on('change', function() {
+			if($(this).val() === 'altro'){
+				// append outside of input container but after input.container
+				this.name = 'altro';
+				$(this).parent().parent().after(`
+					<div class="input-container" id="altro-input">
+						<div class="material-textfield">
+							<input placeholder="" type="text" required name="user" autocomplete="off">
+							<label>altro</label>
+						</div>
+					</div>
+				`);
+			} else {
+				$('#altro-input').remove();
+				this.name = 'user';
+			}
+		});
+	</script>
+
+	<script>
+		// on click esc close modal
+		$(document).keyup(function(e) {
+			if (e.key === "Escape") {
+				$('.modal').css('display', 'none');
+			}
+		});
+	</script>
+
+	<script>
+		// on dom load set select name="user" add options
+		$(document).ready(function() {
+			$('select[name="user"]').append(`
+				<option selected value="" style="display: none;" disabled></option>
+				<option id="Kev" value="Kev">Kev</option>
+				<option id="Simo" value="Simo">Simo</option>
+				<option id="Zenel" value="Zenel">zenel</option>
+				<option id="Tezza" value="Tezza">Tezza</option>
+				<option id="Linda" value="Linda">Linda</option>
+				<option id="Noemi" value="Noemi">Noemi</option>
+				<option id="Giada" value="Giada">Giada</option>
+				<option id="Matilde" value="Matilde">Matilde</option>
+				<option id="Altro" value="Altro">Altro</option>
+			`);
+			if(localStorage.getItem('user')){
+				$('select[name="user"]').val(localStorage.getItem('order-user'));
+			}
+		});
+	</script>
+
+	<script src="/js/submit-loading.js"></script>
+</body>
+</html>

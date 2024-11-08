@@ -12,6 +12,41 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 	<!-- jquery -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<style>
+		.list-elem{
+			grid-template-columns: 0.5fr 1fr 2fr 1fr 50px;
+		}
+		@media only screen and (max-width: 950px) {
+			.list-elem{
+				display: grid;
+				grid-template-areas: 
+					'user user user user settings settings'
+					'user user user user settings settings'
+					'title title title title settings settings'
+					'title title title title done done'
+					'desc desc desc desc done done'
+					'desc desc desc desc done done';
+				gap: 10px;
+			}
+			.user{ grid-area: user; }
+			.title{ grid-area: title; }
+			.desc{ grid-area: desc; }
+			.done{ grid-area: done; }
+			.settings-container{ grid-area: settings; }
+			.list-elem .user,.list-elem .title,.list-elem .desc, .list-elem .done,.list-elem .settings{
+				padding: 0;
+			}
+			.list-elem{
+				padding: 15px;
+			}
+		}
+		.list-elem .done span{
+			transform: rotate(-90deg);
+			position: absolute;
+			right: -25px;
+			color: var(--muted);
+		}
+	</style>
 	<title>Lista</title>
 </head>
 <body>
@@ -44,12 +79,12 @@
 				<script>
 					// on dom load set select.user value from localStorage
 					if(localStorage.getItem('user')){
-						$('select[name="user"]').val(localStorage.getItem('user'));
+						$('select[name="user"]').val(localStorage.getItem('todo-user'));
 
 					}
 					// .select.user on change save to localStorage
 					$('select[name="user"]').on('change', function() {
-						localStorage.setItem('user', $(this).val());
+						localStorage.setItem('todo-user', $(this).val());
 					});
 				</script>
 			</div>
@@ -222,14 +257,14 @@
 		function edit(id){
 			// uncheck
 			$(`#dropdown-${id}`).prop('checked', false);
-			// get data from backend /api/get/:id
+			// get data from backend /api/todo/get/:id
 			$.ajax({
-				url: `/api/get/${id}`,
+				url: `/api/todo/get/${id}`,
 				type: 'GET',
 				success: function(data) {
 					// fill form
-					// form action /api/update/:id
-					$('#edit-todo form').attr('action', `/api/update/${id}`);
+					// form action /api/todo/update/:id
+					$('#edit-todo form').attr('action', `/api/todo/update/${id}`);
 					$('#edit-todo select[name="type"]').val(data.type);
 					$('#edit-todo input[name="title"]').val(data.title);
 					$('#edit-todo input[name="description"]').val(data.description);
@@ -241,9 +276,9 @@
 		}
 
 		function del(id){
-			// send to backend /api/del/:id
+			// send to backend /api/todo/del/:id
 			$.ajax({
-				url: `/api/delete/${id}`,
+				url: `/api/todo/delete/${id}`,
 				type: 'GET',
 				success: function(data) {
 					// remove element
@@ -258,8 +293,8 @@
 			if($(`#${id} .done i`).hasClass('fa-times')){
 				// uncheck
 				$(`#dropdown-${id}`).prop('checked', false);
-				// get data from backend /api/get/:id
-				$('#done-todo form').attr('action', `/api/doneby/${id}`);
+				// get data from backend /api/todo/get/:id
+				$('#done-todo form').attr('action', `/api/todo/doneby/${id}`);
 				$('#done-todo #title').html($(`#${id} .title`).html());
 				$('#done-todo select[name="doneby"]').val(localStorage.getItem('user'));
 				// open modal
@@ -272,9 +307,9 @@
 				btn.style.width = width;
 				btn.style.height = height;
 				btn.innerHTML = "<div class='submit-lds-grid'><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>";
-				// send to backend /api/undone/:id
+				// send to backend /api/todo/undone/:id
 				$.ajax({
-					url: `/api/undone/${id}`,
+					url: `/api/todo/undone/${id}`,
 					type: 'GET',
 					success: function(data) {
 						// remove check
@@ -304,7 +339,7 @@
 			<span class="btn text modal-close" onclick="closeModal('add-todo')">&times;</span>
 			<div class="modal-inner-spacing">
 				<h2>aggiungi</h2>
-				<form method="POST" action="/api/add" class="basic-form">
+				<form method="POST" action="/api/todo/add" class="basic-form">
 					<div class="input-container">
 						<div class="two-inputs-container">
 							<div class="select">
@@ -353,7 +388,7 @@
 			<span class="btn text modal-close" onclick="closeModal('edit-todo')">&times;</span>
 			<div class="modal-inner-spacing">
 				<h2>modifica</h2>
-				<form method="POST" action="/api/update/:id" class="basic-form">
+				<form method="POST" action="/api/todo/update/:id" class="basic-form">
 					<div class="input-container">
 						<div class="two-inputs-container">
 							<div class="select">
@@ -400,7 +435,7 @@
 			<span class="btn text modal-close" onclick="closeModal('done-todo')">&times;</span>
 			<div class="modal-inner-spacing">
 				<h2><span id="title"></span> completato da:</h2>
-				<form method="POST" action="/api/doneby/:id" class="basic-form">
+				<form method="POST" action="/api/todo/doneby/:id" class="basic-form">
 					<div class="select">
 						<select class="select-text" required name="doneby">
 							<option selected value="" style="display: none;" disabled></option>
