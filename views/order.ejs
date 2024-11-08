@@ -247,7 +247,7 @@
 					// remove element
 					$(`#${id}`).remove();
 					// remove #ordini-aggiuntivi if <= 9 orders + <span>
-					if($('#list').children().length <= 10) $('#ordini-aggiuntivi').remove();
+					if($('#list').children().length <= 10) $('#ordini-aggiuntivi').empty();
 				}
 			});
 		}
