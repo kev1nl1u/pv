@@ -64,6 +64,10 @@ app.get('/order', async (req, res) => {
 	}
 });
 
+app.get('/jellyfin', async (req, res) => {
+	res.render('jellyfin.ejs');
+});
+
 // api
 
 // todo
