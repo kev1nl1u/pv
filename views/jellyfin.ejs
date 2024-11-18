@@ -57,18 +57,27 @@
 
 
 	<div class="main-container">
-        <div class="main" style="margin-top: 15px">
+        <div class="main">
 
 			<div class="file-upload-container">
 	
 				<div class="files-upload">
-					<form action="//vespe.lkev.in/jellyfin/upload" method="POST" enctype="multipart/form-data"> <!-- api tunnel -->
-						<div id="filename"></div>
+					<form action="//vespe.lkev.in/jellyfin/upload" method="POST" enctype="multipart/form-data" class="basic-form"> <!-- api tunnel -->
 						<label for="images" class="drop-container" id="dropcontainer">
 							<span class="drop-title">Rilascia il film qui</span>
 							o
 							<input type="file" id="file" accept="video/*,video/x-matroska" required name="file">
 						</label>
+						
+						<div id="filename input-container">
+							<div class="material-textfield mb-10px">
+								<input placeholder="" type="text" required name="filename" autocomplete="off">
+								<label>Titolo</label>
+							</div>
+							<p class="muted">Il titolo del film dev'essere <span class="mono">[titolo].[formato]</span> oppure <span class="mono">[titolo] ([anno]).[formato]</span></p>
+							<p class="muted">Esempi: <u>Interstellar</u>, <u>Interstellar (2014)</u>, ecc.</p>
+						</div>
+
 						<button type="submit" class="btn filled">Upload</button>
 					</form>
 				</div>
@@ -76,6 +85,13 @@
 
 		</div>
 	</div>
+
+	<script>
+		// show filename without format on file input change 
+		$("#file").change(function() {
+			$("input[name=filename]").val($("#file")[0].files[0].name.replace(/\.[^/.]+$/, ""));
+		});
+	</script>
 
 	<script>
 		const dropContainer = document.getElementById("dropcontainer");
@@ -98,6 +114,7 @@
 			e.preventDefault();
 			dropContainer.classList.remove("drag-active");
 			fileInput.files = e.dataTransfer.files;
+			fileInput.dispatchEvent(new Event("change"));
 		});
 	</script>
 	
