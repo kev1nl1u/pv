@@ -14,6 +14,42 @@
 	<!-- jquery -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<title>Jellyfin · PV</title>
+	<style>
+		.progress-wrapper {
+			width:100%;
+		}
+		.progress-wrapper .progress {
+			background-color:green;
+			width:0%;
+			padding:5px 0px 5px 0px;
+		}
+	</style>
+	<script>
+		function postFile() {
+			var formdata = new FormData();
+		
+			formdata.append('file', $('#file')[0].files[0]);
+		
+			var request = new XMLHttpRequest();
+		
+			request.upload.addEventListener('progress', function (e) {
+				var file1Size = $('#file')[0].files[0].size;
+		
+				if (e.loaded <= file1Size) {
+					var percent = Math.round(e.loaded / file1Size * 100);
+					$('#progress-bar-file1').width(percent + '%').html(percent + '%');
+				} 
+		
+				if(e.loaded == e.total){
+					$('#progress-bar-file1').width(100 + '%').html(100 + '%');
+				}
+			});   
+		
+			request.open('post', '/echo/html/');
+			request.timeout = 45000;
+			request.send(formdata);
+		}
+	</script>
 </head>
 <body>
 
@@ -58,32 +94,46 @@
 
 	<div class="main-container">
         <div class="main">
-
-			<div class="file-upload-container">
 	
-				<div class="files-upload">
-					<form action="//vespe.lkev.in/jellyfin/upload" method="POST" enctype="multipart/form-data" class="basic-form"> <!-- api tunnel -->
-						<label for="images" class="drop-container" id="dropcontainer">
-							<span class="drop-title">Rilascia il film qui</span>
-							o
-							<input type="file" id="file" accept="video/*,video/x-matroska" required name="file">
-						</label>
-						
-						<div id="filename input-container">
-							<div class="material-textfield mb-10px">
-								<input placeholder="" type="text" required name="filename" autocomplete="off">
-								<label>Titolo</label>
-							</div>
-							<p class="muted">Il titolo del film dev'essere <span class="mono">[titolo].[formato]</span> oppure <span class="mono">[titolo] ([anno]).[formato]</span></p>
-							<p class="muted">Esempi: <u>Interstellar</u>, <u>Interstellar (2014)</u>, ecc.</p>
-						</div>
+				<form action="//vespe.lkev.in/jellyfin/upload" method="POST" enctype="multipart/form-data" class="basic-form files-upload"> <!-- api tunnel -->
 
-						<button type="submit" class="btn filled">Upload</button>
-					</form>
+					<label for="file" class="drop-container" id="dropcontainer" style="grid-area: upload;">
+						<span class="drop-title">Rilascia il film qui</span>
+						o
+						<input type="file" id="file" accept="video/*,video/x-matroska" required name="file">
+					</label>
+					
+					<div class="input-container" style="grid-area: title; width: 100%; align-self: end;">
+						<div class="material-textfield mb-10px">
+							<input placeholder="" type="text" required name="filename" autocomplete="off">
+							<label>Titolo</label>
+						</div>
+						<div style="display: grid; grid-template-columns: 5% 95%; place-items: center; width: 100%;">
+							<i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+							<div>
+								<p class="muted" style="width: 100%;">Il titolo dev'essere <i>titolo</i> o <i>titolo (anno)</i></p>
+								<p class="muted" style="width: 100%;">Esempi: <i>Interstellar</i>, <i>Interstellar (2014)</i>, ecc.</p>
+							</div>
+						</div>
+					</div>
+					<div class="input-container" style="grid-area: password; width: 100%; align-self: start;">
+						<div class="material-textfield">
+							<input placeholder="" type="password" required name="password">
+							<label>Password</label>
+						</div>
+					</div>
+					
+					<button type="submit" class="btn filled" onclick="postFile()" style="grid-area: submit; align-self: start;">Upload</button>
+				</form>
+
+			<!-- TODO -->
+				<div class="progress-wrapper">
+					<div id="progress-bar-file1" class="progress"></div>
 				</div>
-			</div>
+
 
 		</div>
+
 	</div>
 
 	<script>
