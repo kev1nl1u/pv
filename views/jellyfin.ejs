@@ -103,6 +103,7 @@
 						<input type="file" id="file" accept="video/*,video/x-matroska" required name="file">
 					</label>
 					
+					<!-- check if name already exists TODO -->
 					<div class="input-container" style="grid-area: title; width: 100%; align-self: end;">
 						<div class="material-textfield mb-10px">
 							<input placeholder="" type="text" required name="filename" autocomplete="off">
@@ -111,7 +112,7 @@
 						<div style="display: grid; grid-template-columns: 5% 95%; place-items: center; width: 100%;">
 							<i class="fa-solid fa-circle-info" aria-hidden="true"></i>
 							<div>
-								<p class="muted" style="width: 100%;">Il titolo dev'essere <i>titolo</i> o <i>titolo (anno)</i></p>
+								<p class="muted" style="width: 100%;">Il titolo dev'essere <i>{titolo}</i> o <i>{titolo (anno)}</i></p>
 								<p class="muted" style="width: 100%;">Esempi: <i>Interstellar</i>, <i>Interstellar (2014)</i>, ecc.</p>
 							</div>
 						</div>
