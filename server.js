@@ -48,7 +48,7 @@ app.get('/', (req, res) => {
 
 app.get('/todo', async (req, res) => {
 	try {
-		const results = await pool.query("SELECT * FROM todo ORDER BY doneby IS NOT NULL, time DESC");
+		const results = await pool.query("SELECT * FROM todo ORDER BY doneby IS NOT NULL, time DESC LIMIT 100");
 		res.render('todo.ejs', { lista: results.rows });
 	} catch (error) {
 		console.error(error.message);
